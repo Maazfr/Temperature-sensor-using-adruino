@@ -1,0 +1,65 @@
+class TemperatureSensor {
+  int pin;
+public:
+  TemperatureSensor(int p) : pin(p) {}
+  float value= 1.5;
+  float readCelsius() {
+    int sensorValue = analogRead(pin);
+    float voltage = sensorValue * (value / 1023.0);
+    float temperatureC = (voltage - 0.5) * 100.0;
+    return temperatureC;
+  }
+};
+
+class LED {
+  int pin;
+  public:
+  LED(int p) : pin(p){
+  pinMode(pin, OUTPUT);
+  }
+  void on() {
+    digitalWrite(pin, HIGH);
+  }
+  void off(){
+    digitalWrite(pin, LOW);
+  }
+
+};
+
+LED led1(13);
+LED led2(12);
+LED led3(11);
+
+TemperatureSensor tempSensor(A0);  // Create sensor object for A0
+
+void setup() {
+  Serial.begin(9600);
+}
+
+void loop() {
+  float temperature = tempSensor.readCelsius();
+  if(temperature > 100)
+  {
+    led1.on();
+    led2.off();
+    led3.off();
+  }
+  if(temperature < 100)
+  {
+    led1.off();
+    led2.on();
+    led3.off();
+  }
+  if(temperature == 100)
+  {
+    led1.off();
+    led2.off();
+    led3.on();
+  }
+  Serial.print("Temperature: ");
+  Serial.print(temperature);
+  Serial.println(" °C");
+
+  delay(10000);
+
+}
